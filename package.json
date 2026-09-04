@@ -10,7 +10,8 @@
     "seed": "prisma db seed",
     "postinstall": "prisma generate",
     "pages": "node scripts/build-pages.mjs",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:migrate": "prisma migrate dev",
+    "deploy": "npx vercel --prod --yes"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

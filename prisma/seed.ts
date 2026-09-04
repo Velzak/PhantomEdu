@@ -139,49 +139,90 @@ const GAMES: SeedGame[] = [
   },
 ];
 
+function titleFromFixture(file: string) {
+  return file
+    .replace(/\.html?$/i, "")
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+async function upsertPlayableGame(
+  game: SeedGame,
+  html: string,
+  categories: Record<string, { id: string }>,
+  tags: Record<string, { id: string }>,
+) {
+  const dir = path.join(gamesRoot(), game.slug);
+  await fs.mkdir(dir, { recursive: true });
+  await fs.writeFile(path.join(dir, "index.html"), html, "utf8");
+  const categoryId = categories[game.category].id;
+  const existing = await prisma.game.findUnique({ where: { slug: game.slug } });
+  const data = {
+    title: game.title,
+    description: game.description,
+    categoryId,
+    controls: game.controls,
+    developer: game.developer,
+    featured: game.featured,
+    published: true,
+    sourceType: "html_upload" as const,
+    entryPath: `${game.slug}/index.html`,
+    releaseDate: new Date("2026-09-01T00:00:00.000Z"),
+  };
+  if (existing) {
+    await prisma.game.update({
+      where: { slug: game.slug },
+      data: {
+        ...data,
+        tags: { deleteMany: {}, create: game.tags.map((name) => ({ tagId: tags[name].id })) },
+      },
+    });
+    return;
+  }
+  await prisma.game.create({
+    data: {
+      slug: game.slug,
+      ...data,
+      tags: { create: game.tags.map((name) => ({ tagId: tags[name].id })) },
+    },
+  });
+}
+
+async function extraFixtureGames(fixturesDir: string): Promise<SeedGame[]> {
+  const listed = new Set(GAMES.map((g) => g.fixture.toLowerCase()));
+  const names = await fs.readdir(fixturesDir);
+  const extras: SeedGame[] = [];
+  for (const name of names) {
+    if (!/\.html?$/i.test(name) || listed.has(name.toLowerCase())) continue;
+    const html = await fs.readFile(path.join(fixturesDir, name), "utf8");
+    if (/<base\b[^>]*\bhref\s*=\s*["']https?:\/\//i.test(html)) {
+      console.warn(`Skipping ${name}: it loads assets from another website.`);
+      continue;
+    }
+    const slug = slugify(name.replace(/\.html?$/i, ""));
+    if (!slug) continue;
+    extras.push({
+      slug,
+      title: titleFromFixture(name),
+      description: "An original Phantom game.",
+      category: "Other",
+      tags: ["single-file"],
+      controls: "See in-game",
+      developer: "Phantom",
+      featured: false,
+      fixture: name,
+    });
+  }
+  return extras;
+}
+
 async function seedGames(categories: Record<string, { id: string }>, tags: Record<string, { id: string }>) {
-  const root = gamesRoot();
   const fixtures = path.join(process.cwd(), "prisma", "fixtures");
-  await fs.mkdir(root, { recursive: true });
-
-  for (const game of GAMES) {
+  await fs.mkdir(gamesRoot(), { recursive: true });
+  const extras = await extraFixtureGames(fixtures);
+  for (const game of [...GAMES, ...extras]) {
     const html = await fs.readFile(path.join(fixtures, game.fixture), "utf8");
-    const dir = path.join(root, game.slug);
-    await fs.mkdir(dir, { recursive: true });
-    await fs.writeFile(path.join(dir, "index.html"), html, "utf8");
-    const entryPath = `${game.slug}/index.html`;
-    const categoryId = categories[game.category].id;
-
-    const existing = await prisma.game.findUnique({ where: { slug: game.slug } });
-    const data = {
-      title: game.title,
-      description: game.description,
-      categoryId,
-      controls: game.controls,
-      developer: game.developer,
-      featured: game.featured,
-      published: true,
-      sourceType: "html_upload",
-      entryPath,
-      releaseDate: new Date("2026-09-01T00:00:00.000Z"),
-    };
-
-    const row = existing
-      ? await prisma.game.update({
-          where: { slug: game.slug },
-          data: {
-            ...data,
-            tags: { deleteMany: {}, create: game.tags.map((name) => ({ tagId: tags[name].id })) },
-          },
-        })
-      : await prisma.game.create({
-          data: {
-            slug: game.slug,
-            ...data,
-            tags: { create: game.tags.map((name) => ({ tagId: tags[name].id })) },
-          },
-        });
-    void row;
+    await upsertPlayableGame(game, html, categories, tags);
   }
 }
 
@@ -192,7 +233,7 @@ async function main() {
   const tags = Object.fromEntries(tagRows.map((t) => [t.name, t]));
   await seedAdmin();
   await seedGames(categories, tags);
-  console.log("Seed complete: categories, tags, admin, and five playable games.");
+  console.log("Seed complete: admin, catalog fixtures, and any extra HTML in prisma/fixtures.");
 }
 
 main()
