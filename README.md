@@ -110,6 +110,18 @@ Game HTML is served from the same origin today, sandboxed without `allow-same-or
 
 When you go public, point `GAMES_BASE_URL` at a dedicated play origin (for example `https://play.yourdomain.com`) and have Nginx or Caddy serve `$GAMES_STORAGE_PATH` directly. Then even a future format that needs `allow-same-origin` still cannot reach session cookies on the main site.
 
+## GitHub Pages
+
+GitHub Pages can only serve static files, so it cannot run the Next.js server, SQLite, or the admin dashboard.
+
+The public catalog (the five original games) is published from the generated `docs/` folder to GitHub Pages:
+
+https://velzak.github.io/PhantomEdu/
+
+Rebuild it locally with `npm run pages` before pushing.
+
+Favorites and theme still persist in the browser. Ratings, reports, uploads, and `/admin` stay on the self-hosted Node app.
+
 ## Out of scope in v1
 
 User accounts, synced favorites, leaderboards, comments, zip/embed game sources, and a public submission pipeline. The `sourceType` + `entryPath` fields and a commented `Score` model are the expansion hooks.

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Baseline</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #0c1220; color: #e8edf7; font-family: system-ui, sans-serif; overflow: hidden; }
+    canvas { display: block; margin: 0 auto; background: #0e1628; }
+    #overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
+    h1 { margin: 0 0 8px; }
+    p { opacity: 0.75; margin: 0 0 16px; }
+    button { background: #6c5ce7; color: #fff; border: 0; padding: 10px 18px; border-radius: 8px; cursor: pointer; }
+    #score { position: absolute; top: 12px; width: 100%; text-align: center; font-size: 28px; letter-spacing: 0.2em; }
+  </style>
+</head>
+<body>
+  <div id="score">0 : 0</div>
+  <div id="overlay">
+    <div>
+      <h1>Baseline</h1>
+      <p>You are the left paddle. First to 7 wins.<br/>W/S or arrows. Click or tap to place the paddle too.</p>
+      <button id="start">Play</button>
+    </div>
+  </div>
+  <canvas id="c"></canvas>
+  <script>
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    const overlay = document.getElementById("overlay");
+    const scoreEl = document.getElementById("score");
+    const TARGET = 7;
+    let W, H, p1, p2, ball, vel, running, keys = {};
+
+    function size() {
+      W = Math.min(window.innerWidth, 900);
+      H = Math.min(window.innerHeight, 540);
+      canvas.width = W; canvas.height = H;
+    }
+    function resetBall(dir) {
+      ball = { x: W / 2, y: H / 2, r: 8 };
+      const angle = (Math.random() * 0.6 - 0.3);
+      vel = { x: dir * 6, y: Math.sin(angle) * 6 };
+    }
+    function reset() {
+      p1 = { y: H / 2 - 40, h: 80, s: 0 };
+      p2 = { y: H / 2 - 40, h: 80, s: 0 };
+      resetBall(Math.random() < 0.5 ? 1 : -1);
+      running = true;
+    }
+    function draw() {
+      ctx.fillStyle = "#0e1628";
+      ctx.fillRect(0, 0, W, H);
+      ctx.strokeStyle = "#243049";
+      ctx.setLineDash([8, 10]);
+      ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#e7e9ee";
+      ctx.fillRect(18, p1.y, 10, p1.h);
+      ctx.fillStyle = "#2dd4bf";
+      ctx.fillRect(W - 28, p2.y, 10, p2.h);
+      ctx.fillStyle = "#c4b5fd";
+      ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2); ctx.fill();
+    }
+    function end(text) {
+      running = false;
+      overlay.style.display = "flex";
+      overlay.querySelector("h1").textContent = text;
+      overlay.querySelector("p").textContent = p1.s + " to " + p2.s;
+      document.getElementById("start").textContent = "Play again";
+    }
+    function step() {
+      if (keys.up) p1.y -= 7;
+      if (keys.down) p1.y += 7;
+      p1.y = Math.max(0, Math.min(H - p1.h, p1.y));
+      const target = ball.y - p2.h / 2;
+      p2.y += Math.max(-5.2, Math.min(5.2, target - p2.y));
+      p2.y = Math.max(0, Math.min(H - p2.h, p2.y));
+      ball.x += vel.x; ball.y += vel.y;
+      if (ball.y < ball.r || ball.y > H - ball.r) { vel.y *= -1; ball.y = Math.max(ball.r, Math.min(H - ball.r, ball.y)); }
+      if (ball.x - ball.r < 28 && ball.y > p1.y && ball.y < p1.y + p1.h) {
+        vel.x = Math.abs(vel.x) * 1.05;
+        vel.y += (ball.y - (p1.y + p1.h / 2)) * 0.12;
+        ball.x = 28 + ball.r;
+      }
+      if (ball.x + ball.r > W - 28 && ball.y > p2.y && ball.y < p2.y + p2.h) {
+        vel.x = -Math.abs(vel.x) * 1.05;
+        vel.y += (ball.y - (p2.y + p2.h / 2)) * 0.12;
+        ball.x = W - 28 - ball.r;
+      }
+      if (ball.x < 0) { p2.s++; resetBall(1); }
+      if (ball.x > W) { p1.s++; resetBall(-1); }
+      scoreEl.textContent = p1.s + " : " + p2.s;
+      if (p1.s >= TARGET) end("You take it");
+      if (p2.s >= TARGET) end("The machine takes it");
+    }
+    function loop() {
+      if (!running) return;
+      step(); draw();
+      requestAnimationFrame(loop);
+    }
+    document.getElementById("start").onclick = () => {
+      overlay.style.display = "none";
+      reset();
+      requestAnimationFrame(loop);
+    };
+    window.addEventListener("keydown", (e) => {
+      if (["ArrowUp", "w"].includes(e.key)) { keys.up = true; e.preventDefault(); }
+      if (["ArrowDown", "s"].includes(e.key)) { keys.down = true; e.preventDefault(); }
+    });
+    window.addEventListener("keyup", (e) => {
+      if (["ArrowUp", "w"].includes(e.key)) keys.up = false;
+      if (["ArrowDown", "s"].includes(e.key)) keys.down = false;
+    });
+    canvas.addEventListener("mousemove", (e) => {
+      const r = canvas.getBoundingClientRect();
+      p1.y = ((e.clientY - r.top) / r.height) * H - p1.h / 2;
+    });
+    canvas.addEventListener("touchmove", (e) => {
+      const t = e.touches[0];
+      const r = canvas.getBoundingClientRect();
+      p1.y = ((t.clientY - r.top) / r.height) * H - p1.h / 2;
+      e.preventDefault();
+    }, { passive: false });
+    window.addEventListener("resize", size);
+    size();
+    p1 = { y: 200, h: 80, s: 0 }; p2 = { y: 200, h: 80, s: 0 };
+    ball = { x: 200, y: 200, r: 8 }; vel = { x: 0, y: 0 };
+    draw();
+  </script>
+</body>
+</html>

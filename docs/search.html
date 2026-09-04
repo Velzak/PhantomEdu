@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Search · Phantom</title>
+  <meta name="description" content="Phantom — original browser games, ready in one click." />
+  <link rel="icon" href="./favicon.svg" />
+  <link rel="stylesheet" href="./assets/site.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="wrap bar">
+      <a class="logo" href="./index.html">Phantom</a>
+      <nav class="cats" aria-label="Categories">
+        <a href="./categories/arcade.html">Arcade</a><a href="./categories/casual.html">Casual</a><a href="./categories/platformer.html">Platformer</a><a href="./categories/sports.html">Sports</a>
+      </nav>
+      <form class="search" action="./search.html" method="get" role="search">
+        <label class="sr" for="q">Search games</label>
+        <input id="q" name="q" placeholder="Search titles, tags" autocomplete="off" />
+      </form>
+      <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch theme">☾</button>
+    </div>
+  </header>
+  <main class="wrap">
+    <h1>Search</h1>
+    <p class="muted">Filter the catalog on this page.</p>
+    <p><input data-filter placeholder="Filter by title, category, or tag" style="width:min(100%,28rem);margin:16px 0;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:var(--bg-surface);color:var(--ink)" /></p>
+    <div class="grid" data-catalog>
+      <div data-game="Ribbon Arcade Phantom classic keyboard short-session"><article class="card">
+    <a href="./games/ribbon.html">
+      <div class="thumb" aria-hidden="true"><span>R</span></div>
+      <h3>Ribbon</h3>
+      <p class="muted">Arcade</p>
+    </a>
+  </article></div><div data-game="Baseline Sports Phantom classic keyboard single-file"><article class="card">
+    <a href="./games/baseline.html">
+      <div class="thumb" aria-hidden="true"><span>B</span></div>
+      <h3>Baseline</h3>
+      <p class="muted">Sports</p>
+    </a>
+  </article></div><div data-game="Kiln Arcade Phantom classic keyboard short-session"><article class="card">
+    <a href="./games/kiln.html">
+      <div class="thumb" aria-hidden="true"><span>K</span></div>
+      <h3>Kiln</h3>
+      <p class="muted">Arcade</p>
+    </a>
+  </article></div><div data-game="Ledge Platformer Phantom keyboard short-session"><article class="card">
+    <a href="./games/ledge.html">
+      <div class="thumb" aria-hidden="true"><span>L</span></div>
+      <h3>Ledge</h3>
+      <p class="muted">Platformer</p>
+    </a>
+  </article></div><div data-game="Flashpoint Casual Phantom reflex short-session"><article class="card">
+    <a href="./games/flashpoint.html">
+      <div class="thumb" aria-hidden="true"><span>F</span></div>
+      <h3>Flashpoint</h3>
+      <p class="muted">Casual</p>
+    </a>
+  </article></div>
+    </div>
+    <div class="empty" data-empty hidden>
+      <h2>No games match this search</h2>
+      <p class="muted">Nothing in the catalog fits those words. Clear the filter and browse the full list.</p>
+    </div>
+  </main>
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <p class="logo">Phantom</p>
+      <p class="muted">Original browser games, ready in one click.</p>
+      <a href="./search.html">Browse the catalog</a>
+    </div>
+  </footer>
+  <script src="./assets/site.js"></script>
+</body>
+</html>

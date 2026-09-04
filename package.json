@@ -9,7 +9,7 @@
     "lint": "next lint",
     "seed": "prisma db seed",
     "postinstall": "prisma generate",
-    "typecheck": "tsc --noEmit",
+    "pages": "node scripts/build-pages.mjs",
     "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {

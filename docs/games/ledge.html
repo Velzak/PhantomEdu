@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ledge · Phantom</title>
+  <meta name="description" content="Phantom — original browser games, ready in one click." />
+  <link rel="icon" href="../favicon.svg" />
+  <link rel="stylesheet" href="../assets/site.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="wrap bar">
+      <a class="logo" href="../index.html">Phantom</a>
+      <nav class="cats" aria-label="Categories">
+        <a href="../categories/arcade.html">Arcade</a><a href="../categories/casual.html">Casual</a><a href="../categories/platformer.html">Platformer</a><a href="../categories/sports.html">Sports</a>
+      </nav>
+      <form class="search" action="../search.html" method="get" role="search">
+        <label class="sr" for="q">Search games</label>
+        <input id="q" name="q" placeholder="Search titles, tags" autocomplete="off" />
+      </form>
+      <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch theme">☾</button>
+    </div>
+  </header>
+  <main class="wrap">
+      <div class="player" data-played="ledge">
+        <iframe title="Ledge" src="../play/ledge/index.html" sandbox="allow-scripts allow-forms allow-pointer-lock" loading="lazy"></iframe>
+        <button type="button" class="fs" data-fs aria-label="Enter fullscreen">⛶</button>
+      </div>
+      <div class="row" style="margin-top:24px">
+        <div>
+          <p class="muted">Platformer</p>
+          <h1>Ledge</h1>
+        </div>
+        <button type="button" class="heart" data-fav="ledge" aria-label="Add Ledge to favorites">♥</button>
+      </div>
+      <p class="muted" style="max-width:42rem">A short platform hop to a teal beacon. Cross the gaps, jump the crates, and stay on the stone.</p>
+      <dl class="meta">
+        <div><dt class="muted">Controls</dt><dd>Arrows or WASD to move, Space or Up to jump</dd></div>
+        <div><dt class="muted">Developer</dt><dd>Phantom</dd></div>
+      </dl>
+      <section class="section">
+    <h2>More like this</h2>
+    <div class="rail"><article class="card">
+    <a href="./ribbon.html">
+      <div class="thumb" aria-hidden="true"><span>R</span></div>
+      <h3>Ribbon</h3>
+      <p class="muted">Arcade</p>
+    </a>
+  </article><article class="card">
+    <a href="./baseline.html">
+      <div class="thumb" aria-hidden="true"><span>B</span></div>
+      <h3>Baseline</h3>
+      <p class="muted">Sports</p>
+    </a>
+  </article><article class="card">
+    <a href="./kiln.html">
+      <div class="thumb" aria-hidden="true"><span>K</span></div>
+      <h3>Kiln</h3>
+      <p class="muted">Arcade</p>
+    </a>
+  </article><article class="card">
+    <a href="./flashpoint.html">
+      <div class="thumb" aria-hidden="true"><span>F</span></div>
+      <h3>Flashpoint</h3>
+      <p class="muted">Casual</p>
+    </a>
+  </article></div>
+  </section>
+    </main>
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <p class="logo">Phantom</p>
+      <p class="muted">Original browser games, ready in one click.</p>
+      <a href="../search.html">Browse the catalog</a>
+    </div>
+  </footer>
+  <script src="../assets/site.js"></script>
+</body>
+</html>
