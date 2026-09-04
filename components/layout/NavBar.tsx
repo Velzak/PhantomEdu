@@ -7,7 +7,7 @@ import { Menu, Search, X } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { Input } from "@/components/ui/Input";
-import type { GameCardDTO } from "@/lib/games";
+import type { GameCardDTO } from "@/lib/gameView";
 
 type Category = { name: string; slug: string };
 

@@ -110,6 +110,19 @@ Game HTML is served from the same origin today, sandboxed without `allow-same-or
 
 When you go public, point `GAMES_BASE_URL` at a dedicated play origin (for example `https://play.yourdomain.com`) and have Nginx or Caddy serve `$GAMES_STORAGE_PATH` directly. Then even a future format that needs `allow-same-origin` still cannot reach session cookies on the main site.
 
+## Vercel
+
+Import the GitHub repo at [vercel.com/new](https://vercel.com/new) (or run `npx vercel login` then `npx vercel --prod` so the build happens on Linux). Windows anonymous CLI deploys are a poor fit: the CLI needs symlinks the OS blocks without Developer Mode.
+
+In the Vercel project, set these **Production** (and Preview) environment variables before the first deploy:
+
+- `NEXTAUTH_SECRET` — same value you use locally (`openssl rand -base64 32`)
+- `ADMIN_EMAIL` / `ADMIN_PASSWORD` — used only at build time to seed the admin account
+
+Leave `NEXTAUTH_URL` empty; the app uses `https://$VERCEL_URL`. `DATABASE_URL` and the game file paths are already set in `vercel.json` for `/tmp`.
+
+Vercel’s filesystem is ephemeral. SQLite and uploaded games live in `/tmp` and **reset on cold starts**. Each production build re-seeds the five catalog games, so the public library still plays. Admin uploads, play counts, and ratings will not persist the way they do on a VPS with a disk volume.
+
 ## GitHub Pages
 
 GitHub Pages can only serve static files, so it cannot run the Next.js server, SQLite, or the admin dashboard.

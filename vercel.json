@@ -1,0 +1,10 @@
+{
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "env": {
+    "DATABASE_URL": "file:/tmp/db.sqlite",
+    "GAMES_STORAGE_PATH": "/tmp/games",
+    "THUMBNAILS_STORAGE_PATH": "/tmp/uploads/thumbnails",
+    "FEATURE_RATINGS_ENABLED": "true"
+  }
+}

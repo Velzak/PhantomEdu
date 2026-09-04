@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Star } from "lucide-react";
 import { hasRated, markRated } from "@/lib/localPrefs";
 import { useToast } from "@/components/layout/ToastProvider";
-import { averageRating } from "@/lib/games";
+import { averageRating } from "@/lib/gameView";
 
 export function RatingStars({
   gameId,

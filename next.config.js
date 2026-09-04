@@ -1,11 +1,35 @@
+const tracedData = [
+  "./data/**/*",
+  "./prisma/fixtures/**/*",
+  "./prisma/schema.prisma",
+  "./prisma/.vercel-seed.sqlite",
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  output: process.env.VERCEL ? undefined : "standalone",
   poweredByHeader: false,
+  experimental: {
+    serverComponentsExternalPackages: ["@prisma/client", "prisma"],
+    outputFileTracingIncludes: {
+      "/*": tracedData,
+      "/api/*": tracedData,
+      "/api/**/*": tracedData,
+      "/games-content/*": tracedData,
+      "/games-content/**/*": tracedData,
+      "/uploads/*": tracedData,
+      "/uploads/**/*": tracedData,
+      "/admin/*": tracedData,
+      "/admin/**/*": tracedData,
+      "/games/*": tracedData,
+      "/games/**/*": tracedData,
+    },
+  },
   images: {
     remotePatterns: [
       { protocol: "http", hostname: "localhost", pathname: "/uploads/**" },
       { protocol: "https", hostname: "localhost", pathname: "/uploads/**" },
+      { protocol: "https", hostname: "*.vercel.app", pathname: "/uploads/**" },
     ],
   },
   async headers() {

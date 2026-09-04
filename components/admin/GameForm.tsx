@@ -6,7 +6,7 @@ import { slugify } from "@/lib/validation";
 import { Button } from "@/components/ui/Button";
 import { Input, Textarea, Select, Label } from "@/components/ui/Input";
 import { useToast } from "@/components/layout/ToastProvider";
-import type { GameCardDTO } from "@/lib/games";
+import type { GameCardDTO } from "@/lib/gameView";
 
 type Tax = { id: string; name: string; slug: string };
 

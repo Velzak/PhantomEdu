@@ -4,8 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Play } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
-import type { GameCardDTO } from "@/lib/games";
-import { averageRating, isNewGame } from "@/lib/games";
+import type { GameCardDTO } from "@/lib/gameView";
+import { averageRating, isNewGame } from "@/lib/gameView";
 import { useFeatures } from "@/components/layout/FeaturesProvider";
 
 export function GameThumbnail({

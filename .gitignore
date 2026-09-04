@@ -9,6 +9,9 @@ dist
 data/
 *.sqlite
 *.sqlite-journal
+prisma/.vercel-seed.sqlite
 .DS_Store
 next-env.d.ts
 tsconfig.tsbuildinfo
+.vercel
+

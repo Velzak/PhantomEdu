@@ -1,5 +1,5 @@
 import { GameCard } from "@/components/game/GameCard";
-import type { GameCardDTO } from "@/lib/games";
+import type { GameCardDTO } from "@/lib/gameView";
 
 export function GameRail({
   title,

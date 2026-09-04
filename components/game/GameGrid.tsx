@@ -5,7 +5,7 @@ import { GameCard } from "@/components/game/GameCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { GridSkeleton } from "@/components/ui/Skeleton";
-import type { GameCardDTO } from "@/lib/games";
+import type { GameCardDTO } from "@/lib/gameView";
 import { useToast } from "@/components/layout/ToastProvider";
 
 type Props = {

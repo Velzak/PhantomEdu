@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ButtonLink } from "@/components/ui/Button";
 import { GameThumbnail } from "@/components/game/GameCard";
-import type { GameCardDTO } from "@/lib/games";
+import type { GameCardDTO } from "@/lib/gameView";
 
 export function HeroFeatured({ game }: { game: GameCardDTO }) {
   const reduce = useReducedMotion();

@@ -10,7 +10,7 @@ import { ReportModal } from "@/components/game/ReportModal";
 import { GameRail } from "@/components/game/GameRail";
 import { Badge } from "@/components/ui/Badge";
 import { useFeatures } from "@/components/layout/FeaturesProvider";
-import type { GameCardDTO } from "@/lib/games";
+import type { GameCardDTO } from "@/lib/gameView";
 import { RecommendedRail } from "@/components/home/LocalRails";
 
 export function GameDetail({

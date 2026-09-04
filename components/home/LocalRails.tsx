@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { GameRail } from "@/components/game/GameRail";
 import { loadPrefs } from "@/lib/localPrefs";
-import { recommendFromLocal, type GameCardDTO } from "@/lib/games";
+import { recommendFromLocal, type GameCardDTO } from "@/lib/gameView";
 
 function useLocalCatalog(catalog: GameCardDTO[]) {
   const [ready, setReady] = useState(false);

@@ -1,4 +1,12 @@
 import path from "path";
+import "server-only";
+import { prepareVercelFs } from "@/lib/prepareVercelFs";
+
+prepareVercelFs();
+
+if (!process.env.NEXTAUTH_URL && process.env.VERCEL_URL) {
+  process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
+}
 
 function required(name: string): string {
   const value = process.env[name];
@@ -12,7 +20,9 @@ export function env() {
   return {
     databaseUrl: required("DATABASE_URL"),
     nextAuthSecret: required("NEXTAUTH_SECRET"),
-    nextAuthUrl: process.env.NEXTAUTH_URL ?? "http://localhost:3000",
+    nextAuthUrl:
+      process.env.NEXTAUTH_URL ??
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
     gamesStoragePath: process.env.GAMES_STORAGE_PATH ?? "./data/games",
     thumbnailsStoragePath:
       process.env.THUMBNAILS_STORAGE_PATH ?? "./data/uploads/thumbnails",

@@ -5,6 +5,8 @@ import { getGamesRoot, mimeForFilename } from "@/lib/storage";
 
 type Ctx = { params: { path: string[] } };
 
+export const dynamic = "force-dynamic";
+
 export async function GET(_req: NextRequest, { params }: Ctx) {
   const segments = params.path || [];
   if (segments.some((s) => s === ".." || s.includes("\\") || s.includes("\0"))) {

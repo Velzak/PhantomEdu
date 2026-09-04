@@ -1,6 +1,9 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { env, resolveDataPath } from "@/lib/env";
+import { prepareVercelFs } from "@/lib/prepareVercelFs";
+
+prepareVercelFs();
 
 const HTML_MAX_SNIFF = 512;
 

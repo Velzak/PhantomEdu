@@ -1,4 +1,8 @@
 import { PrismaClient } from "@prisma/client";
+import "server-only";
+import { prepareVercelFs } from "@/lib/prepareVercelFs";
+
+prepareVercelFs();
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
