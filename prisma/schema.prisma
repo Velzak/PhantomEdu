@@ -1,0 +1,96 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Game {
+  id           String        @id @default(cuid())
+  slug         String        @unique
+  title        String
+  description  String
+  thumbnailUrl String?
+  sourceType   String        @default("html_upload") // "html_upload" now; "zip_upload" | "external_embed" reserved for later — do not build those now
+  entryPath    String        // path (relative to GAMES_STORAGE_PATH) to the playable entry file
+  controls     String?
+  developer    String?
+  releaseDate  DateTime?
+  featured     Boolean       @default(false)
+  published    Boolean       @default(false)
+  playCount    Int           @default(0)
+  ratingSum    Int           @default(0)
+  ratingCount  Int           @default(0)
+  categoryId   String
+  category     Category      @relation(fields: [categoryId], references: [id])
+  tags         TagsOnGames[]
+  reports      Report[]
+  playEvents   PlayEvent[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Category {
+  id    String @id @default(cuid())
+  name  String @unique
+  slug  String @unique
+  games Game[]
+}
+
+model Tag {
+  id    String        @id @default(cuid())
+  name  String        @unique
+  slug  String        @unique
+  games TagsOnGames[]
+}
+
+model TagsOnGames {
+  gameId String
+  tagId  String
+  game   Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([gameId, tagId])
+}
+
+model Report {
+  id        String   @id @default(cuid())
+  gameId    String
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  message   String
+  resolved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model PlayEvent {
+  id       String   @id @default(cuid())
+  gameId   String
+  game     Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  playedAt DateTime @default(now())
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model RateLimitHit {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
+}
+
+// Future-expansion hook only — do NOT implement leaderboard UI/API in v1.
+// model Score {
+//   id       String   @id @default(cuid())
+//   gameId   String
+//   game     Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+//   value    Int
+//   setAt    DateTime @default(now())
+// }

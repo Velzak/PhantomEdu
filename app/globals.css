@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+[data-theme="dark"] {
+  --bg-void: #0a0d14;
+  --bg-surface: #131722;
+  --bg-surface-2: #1b2030;
+  --accent-primary: #6c5ce7;
+  --accent-secondary: #2dd4bf;
+  --text-primary: #e7e9ee;
+  --text-muted: #8b93a7;
+  --danger: #f26d6d;
+  --ring: color-mix(in srgb, var(--accent-primary) 70%, white);
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg-void: #f3f4f8;
+  --bg-surface: #ffffff;
+  --bg-surface-2: #e8ebf3;
+  --accent-primary: #5b4cd6;
+  --accent-secondary: #0f766e;
+  --text-primary: #141824;
+  --text-muted: #5c6578;
+  --danger: #d14545;
+  --ring: var(--accent-primary);
+  color-scheme: light;
+}
+
+html,
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-sans), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display), sans-serif;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.rail {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.rail > * {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.card-playable {
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.card-playable .thumb-img {
+  transition: transform 180ms ease;
+}
+
+.card-playable .play-cue {
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .card-playable:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px -16px rgb(0 0 0 / 0.45);
+  }
+  .card-playable:hover .thumb-img {
+    transform: scale(1.06);
+  }
+  .card-playable:hover .play-cue,
+  .card-playable:focus-within .play-cue {
+    opacity: 1;
+  }
+}
+
+.card-playable:focus-within .play-cue {
+  opacity: 1;
+}

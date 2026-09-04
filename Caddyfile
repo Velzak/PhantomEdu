@@ -1,0 +1,7 @@
+# Optional HTTPS reverse proxy. Enable with:
+#   docker compose --profile tls up -d
+# Replace phantom.example.com with your hostname.
+
+phantom.example.com {
+	reverse_proxy app:3000
+}

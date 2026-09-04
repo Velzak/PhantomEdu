@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flashpoint</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #0a0d14; color: #e7e9ee; font-family: system-ui, sans-serif; }
+    #stage {
+      min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: background 80ms linear;
+    }
+    h1 { font-weight: 650; margin: 0 0 8px; }
+    p { opacity: 0.8; max-width: 28rem; text-align: center; }
+    button, #pad {
+      margin-top: 16px; border: 0; border-radius: 10px; cursor: pointer; font-size: 16px;
+    }
+    button { background: #6c5ce7; color: #fff; padding: 12px 20px; }
+    #pad {
+      width: min(92vw, 420px); height: 220px; background: #131722; color: #8b93a7;
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+    }
+    #pad.ready { background: #2dd4bf; color: #042f2e; }
+    #pad.wait { background: #1b2030; }
+    #stats { margin-top: 18px; color: #8b93a7; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <h1>Flashpoint</h1>
+    <p>Wait for the pad to turn teal, then click or tap it as fast as you can. Jumping early resets the wait.</p>
+    <button id="start">Start a trial</button>
+    <div id="pad" hidden>Waiting…</div>
+    <div id="stats"></div>
+  </div>
+  <script>
+    const pad = document.getElementById("pad");
+    const start = document.getElementById("start");
+    const stats = document.getElementById("stats");
+    let state = "idle";
+    let goAt = 0;
+    let timer = 0;
+    let best = null;
+    let last = null;
+
+    function renderStats() {
+      const parts = [];
+      if (last != null) parts.push("Last " + last + " ms");
+      if (best != null) parts.push("Best " + best + " ms");
+      stats.textContent = parts.join(" · ");
+    }
+    function arm() {
+      state = "wait";
+      pad.hidden = false;
+      pad.className = "wait";
+      pad.textContent = "Wait for teal…";
+      start.hidden = true;
+      const delay = 900 + Math.random() * 2800;
+      goAt = 0;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        state = "go";
+        goAt = performance.now();
+        pad.className = "ready";
+        pad.textContent = "Now";
+      }, delay);
+    }
+    function tooSoon() {
+      clearTimeout(timer);
+      state = "idle";
+      pad.className = "";
+      pad.textContent = "Too soon — wait for teal";
+      start.hidden = false;
+      start.textContent = "Try again";
+    }
+    function hit() {
+      last = Math.round(performance.now() - goAt);
+      if (best == null || last < best) best = last;
+      state = "idle";
+      pad.className = "";
+      pad.textContent = last + " ms";
+      start.hidden = false;
+      start.textContent = "Another trial";
+      renderStats();
+    }
+    start.onclick = arm;
+    pad.onclick = () => {
+      if (state === "wait") tooSoon();
+      else if (state === "go") hit();
+    };
+    window.addEventListener("keydown", (e) => {
+      if (e.key !== " " && e.key !== "Enter") return;
+      e.preventDefault();
+      if (state === "idle") arm();
+      else if (state === "wait") tooSoon();
+      else if (state === "go") hit();
+    });
+  </script>
+</body>
+</html>
