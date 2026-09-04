@@ -33,6 +33,7 @@ export function GameForm({
   const [featured, setFeatured] = useState(game?.featured ?? false);
   const [published, setPublished] = useState(game?.published ?? true);
   const [busy, setBusy] = useState(false);
+  const [formError, setFormError] = useState("");
   const [cats, setCats] = useState(categories);
   const [tagList, setTagList] = useState(tags);
   const [newCat, setNewCat] = useState("");
@@ -156,10 +157,19 @@ export function GameForm({
     const form = event.currentTarget;
     const gameFile = (form.elements.namedItem("gameFile") as HTMLInputElement)?.files?.[0];
     if (!game && !gameFile) {
-      toast.push("Attach an HTML game file to create this listing.");
+      const message = "Attach an HTML game file to create this listing.";
+      setFormError(message);
+      toast.push(message);
+      return;
+    }
+    if (gameFile && gameFile.size > 15 * 1024 * 1024) {
+      const message = "Game file must be under 15MB.";
+      setFormError(message);
+      toast.push(message);
       return;
     }
     setBusy(true);
+    setFormError("");
     const body = new FormData();
     body.set("title", title);
     body.set("slug", slug);
@@ -177,13 +187,25 @@ export function GameForm({
 
     try {
       const url = game ? `/api/games/${game.id}` : "/api/games";
-      const res = await fetch(url, { method: game ? "PATCH" : "POST", body });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Could not save game");
+      const res = await fetch(url, { method: game ? "PATCH" : "POST", body, credentials: "same-origin" });
+      const text = await res.text();
+      let data: { error?: string } = {};
+      try {
+        data = text ? (JSON.parse(text) as { error?: string }) : {};
+      } catch {
+        data = {};
+      }
+      if (!res.ok) {
+        if (res.status === 401) throw new Error("You are signed out. Sign in again, then retry.");
+        if (res.status === 413) throw new Error("That file is too large for the server.");
+        throw new Error(data.error || `Could not save game (${res.status})`);
+      }
       router.push("/admin/games");
       router.refresh();
     } catch (err) {
-      toast.push(err instanceof Error ? err.message : "Network failure");
+      const message = err instanceof Error ? err.message : "Network failure";
+      setFormError(message);
+      toast.push(message);
     } finally {
       setBusy(false);
     }
@@ -293,6 +315,7 @@ export function GameForm({
         <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} />
         Featured on homepage
       </label>
+      {formError ? <p className="text-sm text-danger">{formError}</p> : null}
       <Button type="submit" disabled={busy || !canSubmit}>
         {busy ? "Saving…" : game ? "Save changes" : "Create game"}
       </Button>

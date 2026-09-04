@@ -46,6 +46,16 @@ export function looksLikeHtml(buffer: Buffer, filename: string) {
   );
 }
 
+/** Phantom's player is a sandboxed iframe. Games that pull assets from another origin will not run. */
+export function selfContainedHtmlError(buffer: Buffer): string | null {
+  const sample = buffer.subarray(0, Math.min(buffer.length, 200_000)).toString("utf8");
+  const base = sample.match(/<base\b[^>]*\bhref\s*=\s*["'](https?:\/\/[^"']+)/i);
+  if (base) {
+    return "This HTML file loads assets from another website. Phantom only accepts a single self-contained .html file with scripts and styles inline.";
+  }
+  return null;
+}
+
 export function sniffImageExt(buffer: Buffer): "png" | "jpg" | "webp" | "gif" | null {
   if (buffer.length < 12) return null;
   if (buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47) return "png";

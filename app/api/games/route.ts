@@ -9,8 +9,11 @@ import {
   saveGameHtml,
   saveThumbnail,
   ensureStorageDirs,
+  selfContainedHtmlError,
 } from "@/lib/storage";
 import { env } from "@/lib/env";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
@@ -52,7 +55,8 @@ export async function POST(req: NextRequest) {
   const { error } = await requireAdminResponse();
   if (error) return error;
 
-  await ensureStorageDirs();
+  try {
+    await ensureStorageDirs();
   const form = await req.formData();
   const rawTags = form.get("tagIds");
   let tagIds: string[] = [];
@@ -90,6 +94,8 @@ export async function POST(req: NextRequest) {
   if (!looksLikeHtml(buffer, gameFile.name)) {
     return jsonError("Game file must be a valid HTML document", 400);
   }
+  const containedError = selfContainedHtmlError(buffer);
+  if (containedError) return jsonError(containedError, 400);
 
   const entryPath = await saveGameHtml(parsed.data.slug, buffer);
 
@@ -126,7 +132,11 @@ export async function POST(req: NextRequest) {
     include: gameCardInclude,
   });
 
-  return NextResponse.json(toCardDTO(game), { status: 201 });
+    return NextResponse.json(toCardDTO(game), { status: 201 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Could not save game";
+    return jsonError(message, 500);
+  }
 }
 
 function emptyToNull(value: FormDataEntryValue | null) {

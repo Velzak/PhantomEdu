@@ -9,6 +9,7 @@ import {
   saveGameHtml,
   saveThumbnail,
   sniffImageExt,
+  selfContainedHtmlError,
 } from "@/lib/storage";
 import { env } from "@/lib/env";
 import { slugSchema } from "@/lib/validation";
@@ -42,6 +43,8 @@ export async function POST(req: NextRequest) {
     if (!looksLikeHtml(buffer, file.name)) {
       return jsonError("Game file must be a valid HTML document", 400);
     }
+    const containedError = selfContainedHtmlError(buffer);
+    if (containedError) return jsonError(containedError, 400);
     const entryPath = await saveGameHtml(slug, buffer);
     return NextResponse.json({ entryPath, url: `/games-content/${entryPath}` });
   }

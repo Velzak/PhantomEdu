@@ -11,6 +11,7 @@ import {
   renameGameDir,
   saveGameHtml,
   saveThumbnail,
+  selfContainedHtmlError,
 } from "@/lib/storage";
 import { env } from "@/lib/env";
 
@@ -91,6 +92,8 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
     if (!looksLikeHtml(buffer, gameFile.name)) {
       return jsonError("Game file must be a valid HTML document", 400);
     }
+    const containedError = selfContainedHtmlError(buffer);
+    if (containedError) return jsonError(containedError, 400);
     entryPath = await saveGameHtml(slug, buffer);
   }
 
